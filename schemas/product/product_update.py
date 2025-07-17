@@ -8,7 +8,7 @@ class ProductUpdate(BaseModel):
     quantity: conint(ge=0)
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "p_name": "Dishwasher BOSH",
                 "category": "Household appliances",
