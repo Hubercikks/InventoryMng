@@ -1,20 +1,20 @@
-InventoryMng
-A inventory management system, currently under development.
+InventoryMng:
+  A inventory management system, currently under development.
 
-Status
-Project is in alpha stage — many features are still being implemented.
+Status:
+  Project is in alpha stage — many features are still being implemented.
 
-Technologies
-Python 3.11
+Technologies:
+  Python 3.11
 
-FastAPI
+  FastAPI
 
-SQLAlchemy
+  SQLAlchemy
 
-PostgreSQL 
+  PostgreSQL 
 
-Docker (planned)
+  Docker (planned)
 
-Running the project
+Running the project:
   Install dependencies:
   -pip install -r requirements.txt
