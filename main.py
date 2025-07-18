@@ -1,18 +1,15 @@
 from fastapi import FastAPI, HTTPException, Depends, APIRouter, status
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from typing_extensions import Annotated
-import models.user
+from auth import auth
 from database import engine, SessionLocal
 from models import product, user
-from schemas.user import user_create, user_out
+from schemas.user import user_out
+from schemas.product import product_create
 
 app = FastAPI()
-router = APIRouter()
 user.Base.metadata.create_all(bind=engine)
 product.Base.metadata.create_all(bind=engine)
-
-pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_db():
@@ -23,28 +20,17 @@ def get_db():
         db.close()
 
 
-db_dependency = Annotated[Session, Depends(get_db)]
+def get_db_dependency() -> Annotated[Session, Depends(get_db)]:
+    pass
 
 
-@router.post("/createuser/", status_code=status.HTTP_201_CREATED, response_model=user_out.UserOut)
-async def create_user(user_in: user_create.UserCreate, db: db_dependency):
-    existing = db.query(user.User).filter(user.User.email == user_in.email).first()
-    if existing:
-        raise HTTPException(
-            status_code=400,
-            detail="User with this e-mail address already exists"
-        )
-    hashed_password = pwd.hash(user_in.password)
+app.include_router(auth.router)
 
-    new_user = models.user.User(
-        email=user_in.email,
-        hashed_password=hashed_password,
-        role=user_in.role
-    )
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+@app.get("/me", response_model=user_out.UserOut)
+async def read_users_me(current_user: dict = Depends(auth.get_user), db: Session = Depends(get_db)):
+    user_e = db.query(user.User).filter(user.User.email == current_user['email']).first()
+    if not user_e:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user_e
 
-    return new_user
-app.include_router(router)
