@@ -1,5 +1,6 @@
-from sqlalchemy import Integer, String, Column, VARCHAR, Float
+from sqlalchemy import Integer, String, Column, VARCHAR, Float, ForeignKey
 from database import Base
+from models.user import User
 
 
 class Product(Base):
@@ -10,4 +11,4 @@ class Product(Base):
     category = Column(String(100), index=True)
     price = Column(Integer)
     quantity = Column(Float)
-    min_stock = Column(Integer)
+    created_by = Column(Integer, ForeignKey('users.id'), nullable=True)

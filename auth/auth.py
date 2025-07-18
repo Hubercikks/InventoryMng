@@ -51,7 +51,7 @@ async def create_user(user_in: user_create.UserCreate, db: db_dependency):
 
     db.add(new_user)
     db.commit()
-
+    db.refresh(new_user)
     return new_user
 
 
@@ -60,12 +60,12 @@ async def user_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     user_e = db.query(user.User).filter(user.User.email == form_data.username).first()
     if not user_e or not pwd.verify(form_data.password, user_e.hashed_password):
         raise HTTPException(status_code=401, detail="Unsuccessful login attempt")
-    token_l = create_token(user_e.email, timedelta(minutes=20))
+    token_l = create_token(user_e.email, user_e.id, timedelta(minutes=20))
     return {'access_token': token_l, 'token_type': 'bearer', 'message': 'Successfully logged in'}
 
 
-def create_token(username: str, expires_delta):
-    encode = {'sub': username}
+def create_token(username: str, id: int, expires_delta):
+    encode = {'sub': username, 'uid': id}
     expires = datetime.utcnow() + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -75,8 +75,10 @@ async def get_user(token_u: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload = jwt.decode(token_u, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get('sub')
+        user_id: int = payload.get('uid')
         if email is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user')
-        return {'email': email}
+        return {'email': email, 'uid': user_id}
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not Validate user')
+
