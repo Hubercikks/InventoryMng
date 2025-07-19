@@ -2,7 +2,6 @@ from typing import Annotated
 from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from auth.auth import get_user
-import models.product
 from database import SessionLocal
 from schemas.product import product_delete
 from models import product
