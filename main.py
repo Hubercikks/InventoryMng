@@ -5,7 +5,7 @@ from auth import auth
 from database import engine, SessionLocal
 from models import product, user
 from schemas.user import user_out
-from api import product_creation
+from api import product_creation, product_removing
 
 app = FastAPI()
 user.Base.metadata.create_all(bind=engine)
@@ -34,3 +34,4 @@ async def read_users_me(current_user: dict = Depends(auth.get_user), db: Session
 
 app.include_router(auth.router)
 app.include_router(product_creation.router)
+app.include_router(product_removing.router)

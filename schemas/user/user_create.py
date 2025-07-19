@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, constr, field_validator
-
+from pydantic_core import PydanticCustomError
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -15,3 +15,14 @@ class UserCreate(BaseModel):
             }
         }
 
+    @field_validator('role', mode='before')
+    @classmethod
+    def check_role(cls, r: str):
+        roles = ['employee', 'admin', 'manager']
+        if r not in roles:
+            raise PydanticCustomError(
+                'value_error.invalid_role',
+                'Role "{role}" does not exist.',
+                {'role': r}
+            )
+        return r
