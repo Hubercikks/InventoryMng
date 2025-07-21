@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from config import URL_DATABASE
 
-URL_DATABASE = 'SECRET'
 
 engine = create_engine(URL_DATABASE)
 
