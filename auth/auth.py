@@ -1,6 +1,5 @@
 from typing import Annotated
 from sqlalchemy.orm import Session
-from database import SessionLocal
 from passlib.context import CryptContext
 from fastapi import status, APIRouter, Depends, HTTPException
 from models import user
@@ -10,6 +9,8 @@ from jose import jwt, JWTError
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from datetime import timedelta, datetime
 from config import SECRET_KEY, ALGORITHM
+from services.load_db import get_db
+
 
 router = APIRouter(
     prefix='/auth',
@@ -18,21 +19,16 @@ router = APIRouter(
 
 
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/login')
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+get_db()
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@router.post("/token", status_code=status.HTTP_200_OK, response_model=token.Token)
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=token.Token)
 async def user_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     user_e = db.query(user.User).filter(user.User.email == form_data.username).first()
     if not user_e or not pwd.verify(form_data.password, user_e.hashed_password):
@@ -61,7 +57,7 @@ async def get_user(token_u: Annotated[str, Depends(oauth2_bearer)]):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not Validate user')
 
 
-@router.post("/createuser/", status_code=status.HTTP_201_CREATED, response_model=user_out.UserOut)
+@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=user_out.UserOut)
 async def create_user(user_in: user_create.UserCreate, db: db_dependency, current_user: dict = Depends(get_user)):
     if current_user['role'] == 'admin':
         existing = db.query(user.User).filter(user.User.email == user_in.email).first()

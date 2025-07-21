@@ -2,38 +2,33 @@ from typing import Annotated
 from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from auth.auth import get_user
-from database import SessionLocal
-from schemas.product import product_delete
 from models import product
-
+from services.load_db import get_db
 router = APIRouter(
     prefix='/api',
-    tags=['product_removing']
+    tags=['remove']
 )
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+get_db()
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@router.delete('/product_removing')
-async def remove(product_r: product_delete.ProductDelete, db:db_dependency, current_user: dict=Depends(get_user)):
-    exist = db.query(product.Product).filter(product.Product.p_id == product_r.p_id).first()
-    if exist:
-        db.delete(exist)
-        db.commit()
+@router.delete('/products/{product_id}')
+async def remove(product_id: int, db:db_dependency, current_user: dict=Depends(get_user)):
+    exist = db.query(product.Product).filter(product.Product.p_id == product_id).first()
+    if not current_user or current_user['role'] != 'admin':
         raise HTTPException(
-            status_code=status.HTTP_200_OK,
-            detail=f"Product with id {product_r.p_id} have been removed!"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Only admin can delete products"
         )
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Product with id {product_r.p_id} doesn't exist!"
-    )
+    if not exist:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Product with id {product_id} doesn't exist!"
+        )
+    db.delete(exist)
+    db.commit()
+    return f"Product {product_id} have been removed"

@@ -2,29 +2,25 @@ from typing import Annotated
 from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from auth.auth import get_user
-from database import SessionLocal
 from schemas.product import product_create
 from models import product
+from services.load_db import get_db
+
 
 router = APIRouter(
     prefix='/api',
-    tags=['product_creation']
+    tags=['create']
 )
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+get_db()
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@router.post("/creation", response_model=product_create.ProductCreate)
-async def product_creation(product_c: product_create.ProductCreate, db: db_dependency, current_user: dict = Depends(get_user)):
+@router.post("/products", response_model=product_create.ProductCreate)
+async def create(product_c: product_create.ProductCreate, db: db_dependency, current_user: dict = Depends(get_user)):
     products = db.query(product.Product).filter(product.Product.p_name == product_c.p_name).first()
     if products:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"The resource {product_c.p_name} already exists!")

@@ -2,47 +2,47 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from database import SessionLocal
 from schemas.product import product_update
 from auth.auth import get_user
 from models import product
+from services.load_db import get_db
 
 router = APIRouter(
     prefix='/api',
-    tags=['product_updating']
+    tags=['update']
 )
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+get_db()
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@router.post('/product_updating')
-async def product_updating(product_u: product_update.ProductUpdate, db: db_dependency,
-                           current_user: dict = Depends(get_user)):
-    existing = db.query(product.Product).filter(product.Product.p_name == product_u.p_name).first()
+@router.put('/products/{product_id}', status_code=200)
+async def update_product(
+    product_id: int,
+    product_u: product_update.ProductUpdate,
+    db: db_dependency,
+    current_user: dict = Depends(get_user)
+):
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized for this operation"
+        )
+
+    existing = db.query(product.Product).filter(product.Product.p_id == product_id).first()
+
     if not existing:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"No product named {product_u.p_name}!"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Product does not exist"
         )
-    updated_product = product.Product(
-        p_name=product_u.p_name,
-        category=product_u.category,
-        price=product_u.price,
-        quantity=product_u.quantity
-    )
-    try:
-        db.commit()
-        db.refresh(updated_product)
-    except SQLAlchemyError as e:
-        db.rollback()
-        print(f"Database error: {e}")
-        return {"detail": "Database error occurred"}
+
+    for key, value in product_u.dict(exclude_unset=True).items():
+        setattr(existing, key, value)
+
+    db.commit()
+    db.refresh(existing)
+
+    return existing
+

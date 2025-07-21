@@ -1,15 +1,13 @@
-from fastapi import FastAPI, HTTPException, Depends, APIRouter, status
+from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from typing_extensions import Annotated
 from auth import auth
-from database import engine, SessionLocal
-from models import product, user
+from database import SessionLocal
+from models import user
 from schemas.user import user_out
-from api import product_creation, product_removing
+from api import product_creation, product_removing, product_display, product_updating
 
 app = FastAPI()
-user.Base.metadata.create_all(bind=engine)
-product.Base.metadata.create_all(bind=engine)
 
 
 def get_db():
@@ -34,3 +32,5 @@ async def read_users_me(current_user: dict = Depends(auth.get_user), db: Session
 app.include_router(auth.router)
 app.include_router(product_creation.router)
 app.include_router(product_removing.router)
+app.include_router(product_display.router)
+app.include_router(product_updating.router)

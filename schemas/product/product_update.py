@@ -1,11 +1,12 @@
-from pydantic import BaseModel, constr, conint, confloat
+from typing import Optional
+from pydantic import BaseModel
 
 
 class ProductUpdate(BaseModel):
-    p_name: constr(min_length=1)
-    category: constr(min_length=1)
-    price: confloat(ge=0)
-    quantity: conint(ge=0)
+    p_name: Optional[str]
+    category: Optional[str]
+    price: Optional[float]
+    quantity: Optional[int]
 
     class Config:
         json_schema_extra = {
