@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from schemas.product import product_update
@@ -41,5 +42,7 @@ async def product_updating(product_u: product_update.ProductUpdate, db: db_depen
     try:
         db.commit()
         db.refresh(updated_product)
-    except:
-        return "Unexpected error"
+    except SQLAlchemyError as e:
+        db.rollback()
+        print(f"Database error: {e}")
+        return {"detail": "Database error occurred"}

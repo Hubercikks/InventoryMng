@@ -4,7 +4,7 @@ from database import SessionLocal
 from passlib.context import CryptContext
 from fastapi import status, APIRouter, Depends, HTTPException
 from models import user
-from schemas.user import user_create, user_out, user_in, user_login
+from schemas.user import user_create, user_out
 from schemas.token import token
 from jose import jwt, JWTError
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
