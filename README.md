@@ -1,57 +1,63 @@
-📦 InventoryMng
-InventoryMng is an inventory management system currently under development.
+InventoryMng
 
-🚧 Status
-Alpha Stage — Core functionality is being implemented.
+InventoryMng is an inventory management system currently under development:
+. It provides a RESTful API for managing products and users. The project is in an alpha stage – core functionality is being implemented
+. In its current form, InventoryMng offers user account management and inventory endpoints, with plans for additional features (see Planned Features below).
 
-✅ Implemented:
+Features
+User management & authentication: Admin-level user creation, user login, and JWT-based authentication. A protected /me endpoint returns the authenticated user’s details
 
-User creation
+Product management: API endpoints for creating and deleting products. For example, a POST /api/creation endpoint creates a new product from name, category, price, and quantity, and a DELETE /api/product_removing endpoint deletes a product by ID
 
-User login
+Note: Future work includes adding product update endpoints, audit logging, role-based access control (RBAC), and a user interface.
 
-JWT-based authentication
+Technologies
 
-/me endpoint to test token-based user retrieval
+This project is built with the following technologies:
 
-🔮 Planned Features
-
-  🔒 Improve authentication & security logic
-
-  📦 Endpoints for product creation, update, and deletion
-
-  🧾 Audit logging for all product changes
-
-  🛡️ Role-based access control with privileges
-
-  💻 Frontend interface
-
-  🧹 Code and architecture cleanup
-
-  🐳 Docker support for containerization
-
-🛠️ Technologies Used
+  -Python 3.10
   
-  Python 3.10
+  -FastAPI (web framework)
+  
+  -SQLAlchemy (ORM)
+  
+  -PostgreSQL (database)
+  
+  -Docker (planned containerization)
+  
+Prerequisites
 
-  FastAPI
+Python: Version 3.10 or higher is required.
 
-  SQLAlchemy
+Database: A PostgreSQL database instance (server) must be available.
 
-  PostgreSQL
+Environment: Ensure the following environment variables are set:
+SECRET_KEY – secret key for JWT signing.
+URL_DATABASE – PostgreSQL connection string (e.g. postgresql://user:password@localhost/dbname)
+ALGORITHM – JWT signing algorithm (e.g. HS256).
 
-  Docker (planned)
+Installation
 
-🚀 Getting Started
+Clone the repository: 
 
-  1. Install dependencies
-   
+    git clone https://github.com/Hubercikks/InventoryMng.git
+    cd InventoryMng
+    
+Install dependencies:
+
     pip install -r requirements.txt
-  
-  3. Set up environment variables
-   
-  Create and configure a .env file or set the following manually:
+    
+(This installs FastAPI, SQLAlchemy, and other required packages)
+Configure environment: Create a .env file or otherwise export the required variables (see Prerequisites). For example:
 
-  SECRET_KEY — for JWT token signing
+    SECRET_KEY=your_secret_key
+    URL_DATABASE=postgresql://user:password@localhost/dbname
+    ALGORITHM=HS256
 
-  DATABASE_URL — PostgreSQL connection string (e.g., postgresql://user:pass@localhost/dbname)
+The database tables will be created automatically on first run (SQLAlchemy’s create_all is invoked in the app). Ensure your PostgreSQL server is running and the connection URL is correct.
+Usage
+After installation, start the FastAPI server. For example:
+
+    uvicorn main:app --reload
+    
+By default, the API will be served at http://localhost:8000. You can then use the /auth and /api endpoints for user and product management. Interactive API documentation is available at http://localhost:8000/docs. For example, use the /auth/token endpoint to obtain a JWT token (logging in), then access protected routes or /me with the Authorization: Bearer <token> header.
