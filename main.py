@@ -21,7 +21,7 @@ def get_db():
 
 
 def get_db_dependency() -> Annotated[Session, Depends(get_db)]:
-    pass
+    return "Hello"
 
 
 @app.get("/me", response_model=user_out.UserOut)
