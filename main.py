@@ -20,8 +20,7 @@ def get_db():
         db.close()
 
 
-def get_db_dependency() -> Annotated[Session, Depends(get_db)]:
-    return "Hello"
+get_db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @app.get("/me", response_model=user_out.UserOut)

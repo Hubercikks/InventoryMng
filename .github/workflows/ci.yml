@@ -20,7 +20,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install black flake8 mypy pytest isort
-        mypy --install-types
+        python3 -m pip install types-python-jose
+        python3 -m pip install types-passlib
 
     - name: Run formatter (black)
       run: black .
