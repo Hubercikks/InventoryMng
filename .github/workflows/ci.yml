@@ -24,6 +24,9 @@ jobs:
     - name: Run formatter (black)
       run: black .
 
+    - name: Run import sort
+      run: isort .
+
     - name: Run linter (flake8)
       run: flake8 .
 

@@ -5,7 +5,6 @@ from database import SessionLocal
 from schemas.product import product_update
 from auth.auth import get_user
 from models import product
-from sqlalchemy import update, values
 
 router = APIRouter(
     prefix='/api',

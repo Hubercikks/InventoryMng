@@ -1,6 +1,5 @@
-from sqlalchemy import Integer, String, Column, VARCHAR, Float, ForeignKey
+from sqlalchemy import Integer, String, Column, Float, ForeignKey
 from database import Base
-from models.user import User
 
 
 class Product(Base):
