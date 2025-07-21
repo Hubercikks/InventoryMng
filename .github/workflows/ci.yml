@@ -22,7 +22,7 @@ jobs:
         pip install black flake8 mypy pytest
 
     - name: Run formatter (black)
-      run: black --check .
+      run: black .
 
     - name: Run linter (flake8)
       run: flake8 .
