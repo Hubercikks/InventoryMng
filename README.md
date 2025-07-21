@@ -3,13 +3,16 @@ InventoryMng
 InventoryMng is an inventory management system currently under development:
 . It provides a RESTful API for managing products and users. The project is in an alpha stage – core functionality is being implemented
 . In its current form, InventoryMng offers user account management and inventory endpoints, with plans for additional features (see Planned Features below).
+
 Features
 User management & authentication: Admin-level user creation, user login, and JWT-based authentication. A protected /me endpoint returns the authenticated user’s details
 
-
 Product management: API endpoints for creating and deleting products. For example, a POST /api/creation endpoint creates a new product from name, category, price, and quantity, and a DELETE /api/product_removing endpoint deletes a product by ID
+
 Note: Future work includes adding product update endpoints, audit logging, role-based access control (RBAC), and a user interface.
+
 Technologies
+
 This project is built with the following technologies:
 
   -Python 3.10
