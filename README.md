@@ -5,11 +5,38 @@ InventoryMng is an inventory management system currently under development:
 . In its current form, InventoryMng offers user account management and inventory endpoints, with plans for additional features (see Planned Features below).
 
 Features
-User management & authentication: Admin-level user creation, user login, and JWT-based authentication. A protected /me endpoint returns the authenticated user’s details
+User management & authentication: Admin-level user creation, user login, and JWT-based authentication, product adding, updating, removing, listing.
 
-Product management: API endpoints for creating and deleting products. For example, a POST /api/creation endpoint creates a new product from name, category, price, and quantity, and a DELETE /api/product_removing endpoint deletes a product by ID
+Authentication
 
-Note: Future work includes adding product update endpoints, audit logging, role-based access control (RBAC), and a user interface.
+- POST /auth/login  
+  Authenticate user and return a JWT access token.
+
+- POST /auth/register  
+  Register a new user account.  
+  _Only admin users are allowed to create new users._
+
+
+Product Management
+
+- POST /api/products  
+  Create a new product.  
+  Requires authentication.
+
+- DELETE /api/products/{product_id}
+  Delete a product by its ID.  
+  _Only admin users can delete products._
+
+- PUT /api/products/{product_id} 
+  Update a product by its ID.  
+  You can update one or multiple fields of the product (partial updates supported).
+
+- GET /api/list  
+  Retrieve a list of all products.  
+  Requires authentication.
+ 
+
+Note: Future work includes audit logging, pdf generation, role-based access control (RBAC), and a user interface.
 
 Technologies
 
