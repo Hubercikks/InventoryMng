@@ -34,8 +34,18 @@ Product Management
 - GET /api/list  
   Retrieve a list of all products.  
   Requires authentication.
- 
 
+ User Management
+
+ - GET /api/users
+   Retrive a list for all users.
+   Requires authentication.
+
+  - PUT /api/user/{user_id}
+    Update a user by ID.
+    You can update one or multiple fields of the user (partial updates supported).
+    _Only admin._
+    
 Note: Future work includes audit logging, pdf generation, role-based access control (RBAC), and a user interface.
 
 Technologies
