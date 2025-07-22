@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from services.load_db import get_db
-from schemas.user import user_update
+from schemas.user import user_update_scheme
 from auth.auth import get_user
 from models import user
 
@@ -18,7 +18,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @router.put("/user/{user_id}", status_code=200)
-async def user_put(user_id: int, user_u: user_update.UserUpdate, db: db_dependency, current_user: dict=Depends(get_user)):
+async def user_put(user_id: int, user_u: user_update_scheme.UserUpdate, db: db_dependency, current_user: dict=Depends(get_user)):
 
     if not (current_user['role'] == 'admin'):
         raise HTTPException(
