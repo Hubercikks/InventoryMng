@@ -1,5 +1,6 @@
-from sqlalchemy import Integer, String, Column, Float, ForeignKey, NUMERIC
+from sqlalchemy import Integer, String, Column, Float, ForeignKey, NUMERIC, DateTime
 from database import Base
+from datetime import datetime
 
 
 class Product(Base):
@@ -10,4 +11,5 @@ class Product(Base):
     category = Column(String(100), index=True)
     price = Column(NUMERIC)
     quantity = Column(Float)
+    created_at = Column(DateTime, default=datetime.utcnow)
     created_by = Column(Integer, ForeignKey('users.id'), nullable=True)
