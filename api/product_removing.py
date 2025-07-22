@@ -16,7 +16,7 @@ get_db()
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@router.delete('/products/{product_id}')
+@router.delete('/product/{product_id}')
 async def remove(product_id: int, db:db_dependency, current_user: dict=Depends(get_user)):
     exist = db.query(product.Product).filter(product.Product.p_id == product_id).first()
     if not current_user or current_user['role'] != 'admin':
