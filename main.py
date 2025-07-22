@@ -5,7 +5,7 @@ from auth import auth
 from database import SessionLocal
 from models import user
 from schemas.user import user_out
-from api import product_creation, product_removing, product_display, product_updating
+from api import product_creation, product_removing, product_display, product_updating, user_display, user_update
 
 app = FastAPI()
 
@@ -34,3 +34,5 @@ app.include_router(product_creation.router)
 app.include_router(product_removing.router)
 app.include_router(product_display.router)
 app.include_router(product_updating.router)
+app.include_router(user_display.router)
+app.include_router(user_update.router)
