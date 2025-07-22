@@ -18,7 +18,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @router.put("/user/{user_id}", status_code=200)
-async def user_update(user_id: int, user_u: user_update.UserUpdate, db: db_dependency, current_user: dict=Depends(get_user)):
+async def user_put(user_id: int, user_u: user_update.UserUpdate, db: db_dependency, current_user: dict=Depends(get_user)):
 
     if not (current_user['role'] == 'admin'):
         raise HTTPException(
