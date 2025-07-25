@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
 from sqlalchemy.orm import Session
 from typing_extensions import Annotated
 from auth import auth
@@ -21,7 +21,7 @@ def get_db():
 get_db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@app.get("/me", response_model=user_out.UserOut)
+@app.get("/me", response_model=user_out.UserOut, status_code=status.HTTP_200_OK)
 async def read_users_me(current_user: dict = Depends(auth.get_user), db: Session = Depends(get_db)):
     user_e = db.query(user.User).filter(user.User.email == current_user['email']).first()
     if not user_e:
